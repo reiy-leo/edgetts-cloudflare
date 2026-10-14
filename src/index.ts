@@ -106,7 +106,7 @@ export default {
     if (path === "/api/speech") return webSpeech(req, env);
     if (path.startsWith("/api/")) return json({ error: `接口不存在（${statusLabel(404)}）` }, 404);
     if (path === "/health") return json({ ok: true });
-    if ((path.startsWith("/assets/") || /^\/(favicon\.(ico|svg)|favicon-(32|64)\.png|icon-192\.png|apple-touch-icon\.png)$/.test(path)) && env.ASSETS) return env.ASSETS.fetch(req);
+    if ((path.startsWith("/assets/") || /^\/(favicon\.ico|favicon-(32|64)\.png|icon-192\.png|apple-touch-icon\.png)$/.test(path)) && env.ASSETS) return env.ASSETS.fetch(req);
     if (req.method !== "GET" && req.method !== "HEAD") return new Response(statusLabel(405), { status: 405, headers: { "Content-Type": "text/plain; charset=utf-8" } });
     return page(req, env, url, "notfound");
   },

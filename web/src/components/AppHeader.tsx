@@ -42,7 +42,7 @@ export function AppHeader({ children }: { children?: ReactNode }) {
     <header className="sticky top-0 z-10 border-b border-kumo-line bg-kumo-base">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-5">
         <a href="/" className="flex min-w-0 items-center gap-2">
-          <img src="/favicon.svg" alt="" className="size-7 shrink-0" />
+          <img src="/icon-192.png" alt="" className="size-7 shrink-0" />
           <Text variant="heading" as="span">语音合成</Text>
           <span className="hidden sm:inline">
             <Text variant="secondary" size="sm" as="span">Edge TTS</Text>
