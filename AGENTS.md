@@ -85,3 +85,4 @@ pnpm deploy:inline                    # 部署（API Token：静态资源内联�
 - 改接口 / 参数 → 同步 README 的 API 文档与 `docs/PRODUCT.md`。
 - 重要决定记到 `.agents/memory/decisions.md`。
 - 部署由 Rei 决定（Hark 用 `pnpm deploy:inline`）。
+- 仓库连着 Cloudflare Workers Builds：push 到 main 自动构建部署。`wrangler.jsonc` 的 `build.command` 先 `pnpm build` 生成 `public/`（不入库，缺了会报 assets.directory 不存在）；`keep_vars: true` 保留控制台里的明文变量 `API_KEY`。

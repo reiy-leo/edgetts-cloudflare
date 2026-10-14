@@ -2,6 +2,10 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "edge-tts-worker",
   "account_id": "9151f72e404dd53f20b8e6667893237d",
+  // Workers Builds / wrangler deploy 先构建前端到 ./public（public/ 不入库）
+  "build": { "command": "pnpm build" },
+  // 保留控制台里加的变量（API_KEY 是控制台明文变量），部署不覆盖
+  "keep_vars": true,
   "main": "src/worker.ts",
   "compatibility_date": "2025-09-01",
   "workers_dev": false,
