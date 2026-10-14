@@ -4,7 +4,7 @@
 API_KEY=
 
 # Google OAuth 2.0 Web client（Google Cloud Console → APIs & Services → Credentials）
-# 授权回调：https://edgetts-cloudflare.rei8t.dev/auth/callback 与 http://localhost:8787/auth/callback
+# 授权回调：https://edge-tts.rei8t.dev/auth/callback 与 http://localhost:8787/auth/callback
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 

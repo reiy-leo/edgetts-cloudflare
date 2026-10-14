@@ -22,7 +22,7 @@ const assets = {
 } as unknown as Fetcher;
 
 const env: Env = { ASSETS: assets, API_KEY: "test-key", SESSION_SECRET: "s".repeat(48), GOOGLE_CLIENT_ID: "cid", GOOGLE_CLIENT_SECRET: "cs", ADMIN_EMAILS: "reiy.leoz@gmail.com" };
-const BASE = "https://edgetts-cloudflare.rei8t.dev";
+const BASE = "https://edge-tts.rei8t.dev";
 
 let pass = 0;
 let fail = 0;

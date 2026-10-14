@@ -2,7 +2,7 @@
 
 > 把微软 Edge 朗读的神经网络语音合成，包装成 OpenAI TTS 兼容接口，部署在 Cloudflare Workers 上。自带网页（Google 登录后直接用，不用填 API key），收录 **322 个音色、75 种语言**。
 
-线上：<https://edgetts-cloudflare.rei8t.dev>
+线上：<https://edge-tts.rei8t.dev>
 
 ## ✨ 特性
 
@@ -81,7 +81,7 @@ pnpm deploy:inline                 # 用 API Token 部署（静态资源内联�
 **基础用法** 🎯
 
 ```bash
-curl -X POST "https://edgetts-cloudflare.rei8t.dev/v1/audio/speech" \
+curl -X POST "https://edge-tts.rei8t.dev/v1/audio/speech" \
   -H "Authorization: Bearer your-api-key" \
   -H "Content-Type: application/json" \
   -d '{
@@ -95,7 +95,7 @@ curl -X POST "https://edgetts-cloudflare.rei8t.dev/v1/audio/speech" \
 **调整语速** 🏃
 
 ```bash
-curl -X POST "https://edgetts-cloudflare.rei8t.dev/v1/audio/speech" \
+curl -X POST "https://edge-tts.rei8t.dev/v1/audio/speech" \
   -H "Authorization: Bearer your-api-key" \
   -H "Content-Type: application/json" \
   -d '{ "model": "tts-1", "input": "这段话会说得比较快！", "voice": "nova", "speed": 1.5 }' \
@@ -105,7 +105,7 @@ curl -X POST "https://edgetts-cloudflare.rei8t.dev/v1/audio/speech" \
 **使用原生 Edge 音色** 🎭（完整列表见 `GET /v1/voices` 或网页上的音色选择器）
 
 ```bash
-curl -X POST "https://edgetts-cloudflare.rei8t.dev/v1/audio/speech" \
+curl -X POST "https://edge-tts.rei8t.dev/v1/audio/speech" \
   -H "Authorization: Bearer your-api-key" \
   -H "Content-Type: application/json" \
   -d '{ "model": "tts-1", "input": "Hello, this is a test with English voice.", "voice": "en-US-JennyNeural" }' \
@@ -115,7 +115,7 @@ curl -X POST "https://edgetts-cloudflare.rei8t.dev/v1/audio/speech" \
 **高级参数** 🔧
 
 ```bash
-curl -X POST "https://edgetts-cloudflare.rei8t.dev/v1/audio/speech" \
+curl -X POST "https://edge-tts.rei8t.dev/v1/audio/speech" \
   -H "Authorization: Bearer your-api-key" \
   -H "Content-Type: application/json" \
   -d '{
@@ -163,7 +163,7 @@ curl -X POST "https://edgetts-cloudflare.rei8t.dev/v1/audio/speech" \
 ### 模型列表：`GET /v1/models`
 
 ```bash
-curl "https://edgetts-cloudflare.rei8t.dev/v1/models" -H "Authorization: Bearer your-api-key"
+curl "https://edge-tts.rei8t.dev/v1/models" -H "Authorization: Bearer your-api-key"
 ```
 
 返回 `tts-1`、`tts-1-hd` 和 6 个 `tts-1-<预设>`。
@@ -171,7 +171,7 @@ curl "https://edgetts-cloudflare.rei8t.dev/v1/models" -H "Authorization: Bearer 
 ### 音色目录：`GET /v1/voices`
 
 ```bash
-curl "https://edgetts-cloudflare.rei8t.dev/v1/voices" -H "Authorization: Bearer your-api-key"
+curl "https://edge-tts.rei8t.dev/v1/voices" -H "Authorization: Bearer your-api-key"
 ```
 
 ```jsonc
@@ -221,7 +221,7 @@ curl "https://edgetts-cloudflare.rei8t.dev/v1/voices" -H "Authorization: Bearer 
 ```python
 from openai import OpenAI
 
-client = OpenAI(api_key="your-api-key", base_url="https://edgetts-cloudflare.rei8t.dev/v1")
+client = OpenAI(api_key="your-api-key", base_url="https://edge-tts.rei8t.dev/v1")
 response = client.audio.speech.create(model="tts-1", voice="alloy", input="你好，世界！")
 response.stream_to_file("output.mp3")
 ```
@@ -232,7 +232,7 @@ response.stream_to_file("output.mp3")
 import OpenAI from 'openai';
 import fs from 'node:fs';
 
-const openai = new OpenAI({ apiKey: 'your-api-key', baseURL: 'https://edgetts-cloudflare.rei8t.dev/v1' });
+const openai = new OpenAI({ apiKey: 'your-api-key', baseURL: 'https://edge-tts.rei8t.dev/v1' });
 const mp3 = await openai.audio.speech.create({ model: 'tts-1', voice: 'alloy', input: '你好，世界！' });
 await fs.promises.writeFile('output.mp3', Buffer.from(await mp3.arrayBuffer()));
 ```

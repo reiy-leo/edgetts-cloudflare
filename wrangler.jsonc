@@ -7,7 +7,7 @@
   "workers_dev": false,
   "preview_urls": false,
   // 自定义域名（zone: rei8t.dev）
-  "routes": [{ "pattern": "edgetts-cloudflare.rei8t.dev", "custom_domain": true }],
+  "routes": [{ "pattern": "edge-tts.rei8t.dev", "custom_domain": true }],
   "observability": { "enabled": true },
   // 前端（React + Kumo）：pnpm build 把 web/ 构建到 ./public。
   "assets": {
@@ -25,5 +25,5 @@
   }
   // Secrets（不要提交；wrangler secret put … 或在 CF 控制台添加）：
   //   API_KEY（外部 /v1/* 用）、SESSION_SECRET（本项目单独生成）、GOOGLE_CLIENT_ID、GOOGLE_CLIENT_SECRET
-  // Google Cloud 授权回调地址：https://edgetts-cloudflare.rei8t.dev/auth/callback 与 http://localhost:8787/auth/callback
+  // Google Cloud 授权回调地址：https://edge-tts.rei8t.dev/auth/callback 与 http://localhost:8787/auth/callback
 }

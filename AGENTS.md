@@ -4,7 +4,7 @@
 
 ## 目标
 
-把微软 Edge 朗读的 TTS 包装成 OpenAI 兼容接口（给程序用，`API_KEY` 鉴权），再加一个网页：Google 登录后直接合成、挑音色、试听、下载，不用填 API key。部署在 **https://edgetts-cloudflare.rei8t.dev**。
+把微软 Edge 朗读的 TTS 包装成 OpenAI 兼容接口（给程序用，`API_KEY` 鉴权），再加一个网页：Google 登录后直接合成、挑音色、试听、下载，不用填 API key。部署在 **https://edge-tts.rei8t.dev**。
 
 **显示名**：中文「语音合成」，英文「Edge TTS」，不加后缀（Rei 之后可能改名）。`<title>` 只用中文名（`src/html.ts` 的 `SITE_TITLE`）；页头中文名 + 英文名小号副标题；og:title / og:site_name 用英文名（`web/index.html`）。仓库名、Worker 名 `edgetts-cloudflare` 与域名不变。改名时同步这几处 + `AppHeader.tsx`、`Auth.tsx`、README。
 

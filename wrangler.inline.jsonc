@@ -9,7 +9,7 @@
   "workers_dev": false,
   "preview_urls": false,
   // 自定义域名（zone: rei8t.dev）
-  "routes": [{ "pattern": "edgetts-cloudflare.rei8t.dev", "custom_domain": true }],
+  "routes": [{ "pattern": "edge-tts.rei8t.dev", "custom_domain": true }],
   "observability": { "enabled": true },
   // 保留控制台里加的变量/secret
   "keep_vars": true,
