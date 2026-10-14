@@ -3,7 +3,7 @@ node_modules/
 .dev.vars
 .env
 .env.*
-public/
+/public/
 worker-inline/assets.generated.ts
 .DS_Store
 *.log
