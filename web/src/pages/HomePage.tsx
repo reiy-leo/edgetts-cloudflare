@@ -13,6 +13,7 @@ import {
   SparkleIcon,
   TrashIcon,
   WarningCircleIcon,
+  XIcon,
 } from "@phosphor-icons/react";
 import { ROLE_LABEL, STYLE_LABEL } from "../../../src/shared/voices.ts";
 import type { CleaningOptions, LoginError, PageData, SpeechRequest } from "../../../src/shared/types.ts";
@@ -153,6 +154,14 @@ export function HomePage({ page }: { page: PageData }) {
   const toast = useKumoToastManager();
   const [d, setD] = useState<Draft>(loadDraft);
   const [pickerOpen, setPickerOpen] = useState(false);
+  // 登录错误只显示一次：进页面就把 ?login_error 从地址栏抹掉（刷新不会再出现），点关闭后隐藏
+  const [shownError, setShownError] = useState<LoginError | null>(page.loginError);
+  useEffect(() => {
+    const url = new URL(location.href);
+    if (!url.searchParams.has("login_error")) return;
+    url.searchParams.delete("login_error");
+    window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
+  }, []);
   const [advOpen, setAdvOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -214,7 +223,15 @@ export function HomePage({ page }: { page: PageData }) {
     <>
       <AppHeader />
       <main className="mx-auto grid max-w-6xl gap-6 px-5 py-8">
-        {page.loginError && <Banner variant="error" icon={<WarningCircleIcon weight="fill" />} title="登录失败" description={LOGIN_ERRORS[page.loginError]} />}
+        {shownError && (
+          <Banner
+            variant="error"
+            icon={<WarningCircleIcon weight="fill" />}
+            title="登录失败"
+            description={LOGIN_ERRORS[shownError]}
+            action={<Button variant="ghost" shape="square" size="sm" icon={XIcon} aria-label="关闭" onClick={() => setShownError(null)} />}
+          />
+        )}
         <div className="grid gap-1.5">
           <Text variant="heading" size="lg" as="h1">语音合成</Text>
           <Text variant="secondary">基于微软 Edge 朗读，300 多种音色、75 种语言。网页登录后直接用；程序调用走 OpenAI 兼容接口。</Text>

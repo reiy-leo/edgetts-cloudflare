@@ -1,8 +1,8 @@
 // 音色选择弹窗：搜索 + 多维筛选（性别 / 语言 / 音高 / 质感 / 口音 / 场景 / 年龄），按语言再按性别分组；
 // 「预设」组（OpenAI 的 6 个名字）固定在最前。每个音色可以试听（走 /api/speech，结果缓存在内存里）。
 import { useMemo, useRef, useState } from "react";
-import { Badge, Button, Dialog, Input, Select, Text, useKumoToastManager } from "@cloudflare/kumo";
-import { CheckIcon, MagnifyingGlassIcon, PlayIcon, PushPinIcon, SpeakerHighIcon, StopIcon } from "@phosphor-icons/react";
+import { Badge, Button, Dialog, Input, Select, Switch, Text, useKumoToastManager } from "@cloudflare/kumo";
+import { CheckIcon, CopyIcon, MagnifyingGlassIcon, PlayIcon, PushPinIcon, SpeakerHighIcon, StopIcon } from "@phosphor-icons/react";
 import { OPENAI_VOICE_MAP, PRESET_IDS, PRESET_LABEL, sampleFor } from "../../../src/shared/presets.ts";
 import { VOICE_BY_ID, VOICES, type VoiceInfo } from "../../../src/shared/voices.ts";
 import { errMsg, speech } from "../api.ts";
@@ -130,10 +130,11 @@ function Tags({ v }: { v: VoiceInfo }) {
   );
 }
 
-function VoiceCard({ title, sub, v, selected, onSelect, preview, previewKey, voice }: {
+function VoiceCard({ title, sub, v, selected, onSelect, preview, previewKey, voice, showTags }: {
   title: string; sub: string; v: VoiceInfo | undefined; selected: boolean; onSelect: () => void;
-  preview: ReturnType<typeof usePreview>; previewKey: string; voice: string;
+  preview: ReturnType<typeof usePreview>; previewKey: string; voice: string; showTags: boolean;
 }) {
+  const toast = useKumoToastManager();
   const busy = preview.loading === previewKey;
   const isPlaying = preview.playing === previewKey;
   return (
@@ -142,39 +143,62 @@ function VoiceCard({ title, sub, v, selected, onSelect, preview, previewKey, voi
       tabIndex={0}
       onClick={onSelect}
       onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), onSelect())}
-      className={`grid cursor-pointer content-start gap-2 rounded-lg bg-kumo-base px-3.5 py-3 ring hover:bg-kumo-tint ${selected ? "ring-2 ring-kumo-brand" : "ring-kumo-line"}`}
+      className={`flex cursor-pointer items-stretch gap-3 rounded-lg bg-kumo-base py-3 pr-3 pl-3.5 ring hover:bg-kumo-tint ${selected ? "ring-2 ring-kumo-brand" : "ring-kumo-line"}`}
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="grid min-w-0 gap-0.5">
-          <span className="flex items-center gap-1.5 truncate font-medium">
-            {selected && <CheckIcon size={14} weight="bold" className="shrink-0 text-kumo-brand" />}
-            <span className="truncate">{title}</span>
-          </span>
-          <span className="truncate font-mono text-xs text-kumo-subtle">{sub}</span>
-        </div>
-        <Button
-          size="sm"
-          variant="secondary"
-          icon={isPlaying ? StopIcon : PlayIcon}
-          loading={busy}
-          aria-label={`试听 ${title}`}
+      <div className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)] content-center gap-1">
+        <span className="flex items-center gap-1.5 truncate font-medium">
+          {selected && <CheckIcon size={14} weight="bold" className="shrink-0 text-kumo-brand" />}
+          <span className="truncate">{title}</span>
+        </span>
+        {/* 音色 ID：点一下复制，不触发选择 */}
+        <button
+          type="button"
+          title="复制音色 ID"
+          aria-label={`复制音色 ID ${sub}`}
+          className="group flex max-w-full min-w-0 items-center gap-1 justify-self-start rounded font-mono text-xs text-kumo-subtle hover:text-kumo-default"
           onClick={(e) => {
             e.stopPropagation();
-            void preview.play(previewKey, voice, v?.lang ?? "zh");
+            void navigator.clipboard.writeText(sub).then(
+              () => toast.add({ title: "已复制音色 ID", description: sub }),
+              () => toast.add({ title: "复制失败", description: "浏览器不允许访问剪贴板", variant: "error" }),
+            );
           }}
         >
-          {isPlaying ? "停止" : "试听"}
-        </Button>
+          <span className="truncate">{sub}</span>
+          <CopyIcon size={12} className="shrink-0 opacity-60 group-hover:opacity-100" />
+        </button>
+        {showTags && v && <Tags v={v} />}
       </div>
-      {v && <Tags v={v} />}
+      {/* 试听：靠右、垂直居中、占满卡片高度 */}
+      <Button
+        variant="secondary"
+        icon={isPlaying ? StopIcon : PlayIcon}
+        loading={busy}
+        className="h-auto shrink-0 self-stretch px-3"
+        aria-label={`试听 ${title}`}
+        onClick={(e) => {
+          e.stopPropagation();
+          void preview.play(previewKey, voice, v?.lang ?? "zh");
+        }}
+      >
+        {isPlaying ? "停止" : "试听"}
+      </Button>
     </div>
   );
 }
+
+const TAGS_KEY = "tts-voice-tags";
 
 export function VoicePicker({ open, onOpenChange, value, onChange }: { open: boolean; onOpenChange: (o: boolean) => void; value: string; onChange: (id: string) => void }) {
   const [q, setQ] = useState("");
   const [f, setF] = useState<Filters>(EMPTY);
   const preview = usePreview();
+  // 标签默认不显示，开关记在 localStorage
+  const [showTags, setShowTags] = useState(() => localStorage.getItem(TAGS_KEY) === "1");
+  const toggleTags = (on: boolean) => {
+    setShowTags(on);
+    localStorage.setItem(TAGS_KEY, on ? "1" : "0");
+  };
   const query = q.trim().toLowerCase();
   const filtering = query !== "" || Object.values(f).some((x) => x !== ALL);
 
@@ -248,9 +272,12 @@ export function VoicePicker({ open, onOpenChange, value, onChange }: { open: boo
           </div>
           <div className="flex items-center justify-between gap-2">
             <Text variant="secondary" size="sm">{filtering ? `找到 ${total} 个音色` : `${groups.length} 种语言`}</Text>
-            {filtering && (
-              <Button size="sm" variant="ghost" onClick={() => (setQ(""), setF(EMPTY))}>清除筛选</Button>
-            )}
+            <div className="flex items-center gap-3">
+              {filtering && (
+                <Button size="sm" variant="ghost" onClick={() => (setQ(""), setF(EMPTY))}>清除筛选</Button>
+              )}
+              <Switch label="显示标签" size="sm" checked={showTags} onCheckedChange={toggleTags} />
+            </div>
           </div>
         </div>
 
@@ -274,6 +301,7 @@ export function VoicePicker({ open, onOpenChange, value, onChange }: { open: boo
                     preview={preview}
                     previewKey={OPENAI_VOICE_MAP[p]!}
                     voice={p}
+                    showTags={showTags}
                   />
                 ))}
               </div>
@@ -293,14 +321,15 @@ export function VoicePicker({ open, onOpenChange, value, onChange }: { open: boo
                     {gg.list.map((v) => (
                       <VoiceCard
                         key={v.id}
-                        title={v.name}
-                        sub={`${v.regionZh} · ${v.id}`}
+                        title={`${v.name} · ${v.regionZh}`}
+                        sub={v.id}
                         v={v}
                         selected={value === v.id}
                         onSelect={() => pick(v.id)}
                         preview={preview}
                         previewKey={v.id}
                         voice={v.id}
+                        showTags={showTags}
                       />
                     ))}
                   </div>
