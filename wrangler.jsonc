@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "edgetts-cloudflare",
+  "name": "edge-tts-worker",
   "account_id": "9151f72e404dd53f20b8e6667893237d",
   "main": "src/worker.ts",
   "compatibility_date": "2025-09-01",

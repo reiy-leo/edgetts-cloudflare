@@ -2,7 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   // 与 wrangler.jsonc 同一个 Worker，区别：public/ 内联进脚本（用 API Token 部署时 Static Assets 上传会 401）。
   // pnpm deploy:inline
-  "name": "edgetts-cloudflare",
+  "name": "edge-tts-worker",
   "account_id": "9151f72e404dd53f20b8e6667893237d",
   "main": "worker-inline/entry.ts",
   "compatibility_date": "2025-09-01",
