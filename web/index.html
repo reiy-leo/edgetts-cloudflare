@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>语音合成</title>
+    <meta name="description" content="语音合成：基于微软 Edge 朗读的文字转语音，300 多种音色，OpenAI 兼容接口。" />
+    <meta property="og:title" content="Edge TTS" />
+    <meta property="og:site_name" content="Edge TTS" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script>
+      // 主题初始化（在渲染前执行，避免闪烁）：localStorage et-theme = light | dark，缺省跟随系统
+      (function () {
+        var m = window.matchMedia("(prefers-color-scheme: dark)");
+        var set = function () {
+          var p = null;
+          try { p = localStorage.getItem("et-theme"); } catch (e) {}
+          var dark = p === "dark" || (p !== "light" && m.matches);
+          document.documentElement.dataset.mode = dark ? "dark" : "light";
+          document.documentElement.style.colorScheme = dark ? "dark" : "light";
+        };
+        set();
+        m.addEventListener("change", set);
+      })();
+    </script>
+    <!--PAGE_DATA-->
+  </head>
+  <body class="bg-kumo-canvas text-kumo-default">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
