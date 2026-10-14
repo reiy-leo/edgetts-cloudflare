@@ -143,7 +143,7 @@ function VoiceCard({ title, sub, v, selected, onSelect, preview, previewKey, voi
       tabIndex={0}
       onClick={onSelect}
       onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), onSelect())}
-      className={`flex cursor-pointer items-stretch gap-3 rounded-lg bg-kumo-base py-3 pr-3 pl-3.5 ring hover:bg-kumo-tint ${selected ? "ring-2 ring-kumo-brand" : "ring-kumo-line"}`}
+      className={`flex cursor-pointer items-stretch gap-3 rounded-lg py-3 pr-3 pl-3.5 ${selected ? "bg-kumo-brand/10 hover:bg-kumo-brand/15" : "bg-kumo-recessed hover:bg-kumo-tint"}`}
     >
       <div className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)] content-center gap-1">
         <span className="flex items-center gap-1.5 truncate font-medium">
@@ -174,7 +174,7 @@ function VoiceCard({ title, sub, v, selected, onSelect, preview, previewKey, voi
         variant="secondary"
         icon={isPlaying ? StopIcon : PlayIcon}
         loading={busy}
-        className="h-auto shrink-0 self-stretch px-3"
+        className="h-auto shrink-0 self-stretch px-3 ring-0"
         aria-label={`试听 ${title}`}
         onClick={(e) => {
           e.stopPropagation();
@@ -238,7 +238,7 @@ export function VoicePicker({ open, onOpenChange, value, onChange }: { open: boo
       }}
     >
       <Dialog size="xl" className="flex max-h-[88vh] flex-col overflow-hidden p-0 sm:w-[60rem] sm:max-w-[94vw]">
-        <div className="grid gap-3 border-b border-kumo-line px-5 py-4">
+        <div className="grid gap-3 px-5 pt-4 pb-3">
           <div className="flex items-start gap-3">
             <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-kumo-recessed text-kumo-subtle">
               <SpeakerHighIcon size={18} />
@@ -254,21 +254,32 @@ export function VoicePicker({ open, onOpenChange, value, onChange }: { open: boo
             <MagnifyingGlassIcon size={16} className="pointer-events-none absolute top-1/2 left-3 z-10 -translate-y-1/2 text-kumo-subtle" />
             <Input aria-label="搜索音色" className="w-full pl-9" placeholder="搜索名字、语言、地区、方言或 ShortName（如 粤语、Xiaoxiao、en-GB）" value={q} onChange={(e) => setQ(e.target.value)} />
           </div>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
-            {FILTERS.map((d) => (
-              <Select
-                key={d.key}
-                size="sm"
-                label={d.label}
-                value={f[d.key]}
-                items={d.items}
-                onValueChange={(v) => setF((x) => ({ ...x, [d.key]: (v as string) ?? ALL }))}
-              >
-                {Object.entries(d.items).map(([k, l]) => (
-                  <Select.Option key={k} value={k}>{l}</Select.Option>
-                ))}
-              </Select>
-            ))}
+          {/* 筛选条：一整块浅底，选项用背景色区分；有筛选的项高亮 */}
+          <div className="grid grid-cols-2 gap-1 rounded-lg bg-kumo-recessed p-1 sm:grid-cols-4 lg:grid-cols-7">
+            {FILTERS.map((d) => {
+              const active = f[d.key] !== ALL;
+              return (
+                <Select
+                  key={d.key}
+                  size="sm"
+                  aria-label={d.label}
+                  value={f[d.key]}
+                  items={d.items}
+                  className={`w-full shadow-none ring-0 ${active ? "bg-kumo-brand/15 font-medium hover:bg-kumo-brand/20 data-[state=open]:bg-kumo-brand/20" : "bg-transparent hover:bg-kumo-tint data-[state=open]:bg-kumo-tint"}`}
+                  renderValue={(v) => (
+                    <span className="flex min-w-0 items-baseline gap-1.5">
+                      <span className={active ? "shrink-0 opacity-70" : "shrink-0 text-kumo-subtle"}>{d.label}</span>
+                      <span className="truncate">{d.items[v as string] ?? "全部"}</span>
+                    </span>
+                  )}
+                  onValueChange={(v) => setF((x) => ({ ...x, [d.key]: (v as string) ?? ALL }))}
+                >
+                  {Object.entries(d.items).map(([k, l]) => (
+                    <Select.Option key={k} value={k}>{l}</Select.Option>
+                  ))}
+                </Select>
+              );
+            })}
           </div>
           <div className="flex items-center justify-between gap-2">
             <Text variant="secondary" size="sm">{filtering ? `找到 ${total} 个音色` : `${groups.length} 种语言`}</Text>
@@ -310,7 +321,7 @@ export function VoicePicker({ open, onOpenChange, value, onChange }: { open: boo
 
           {groups.map((g) => (
             <section key={g.lang} className="grid gap-3">
-              <div className="sticky top-0 z-[1] -mx-5 flex items-baseline gap-2 border-b border-kumo-line bg-kumo-base px-5 py-1.5">
+              <div className="sticky top-0 z-[1] -mx-5 flex items-baseline gap-2 bg-kumo-base px-5 py-2">
                 <Text variant="heading" as="h3">{g.lang}</Text>
                 <Text variant="secondary" size="sm">{g.count} 个</Text>
               </div>
@@ -345,7 +356,7 @@ export function VoicePicker({ open, onOpenChange, value, onChange }: { open: boo
           )}
         </div>
 
-        <div className="flex items-center justify-between gap-2 border-t border-kumo-line px-5 py-3">
+        <div className="flex items-center justify-between gap-2 bg-kumo-recessed px-5 py-3">
           <Text variant="secondary" size="sm">点卡片选择；「试听」需要登录。</Text>
           <Dialog.Close render={(p) => <Button {...p} variant="secondary">关闭</Button>} />
         </div>
